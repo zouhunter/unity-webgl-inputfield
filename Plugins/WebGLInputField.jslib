@@ -7,21 +7,19 @@
 		  return;
       }
 	  
-	  //var x0 = x;
-	  //var y0 = y;
-	  //var ucanvas = document.getElementById("gameContainer");
-	  //
-	  //window.onresize= function(){
-		//   var offsetx = (document.documentElement.clientWidth - ucanvas.clientWidth) * 0.5;
-		//   x = x0 + offsetx;
-		//   var offsety = (document.documentElement.clientHeight - ucanvas.clientHeight) * 0.5- 42;
-	  //     y = y0  + offsety;
-		//   $('#nativeInputDialogInput').css({left: x + 'px', top: y + 'px', width: w, height: h});
-      //};
-      //
-	  //
-	  //x = x0+ (document.documentElement.clientWidth -ucanvas.clientWidth) * 0.5;
-	  //y = y0+ (document.documentElement.clientHeight - ucanvas.clientHeight) * 0.5- 42;
+	  var x0 = x;
+	  var y0 = y;
+	  var ucanvas = document.getElementById("gameContainer");
+	  window.onresize= function(){
+		   var offsetx = (document.documentElement.clientWidth - ucanvas.clientWidth) * 0.5;
+		   x = x0 + offsetx;
+		   var offsety = (document.documentElement.clientHeight - ucanvas.clientHeight) * 0.5- 42;
+	       y = y0  + offsety;
+	       $('#nativeInputDialogInput').css({left: x + 'px', top: y + 'px', width: w, height: h});
+      };
+      
+	  x = x0+ (document.documentElement.clientWidth -ucanvas.clientWidth) * 0.5;
+	  y = y0+ (document.documentElement.clientHeight - ucanvas.clientHeight) * 0.5- 42;
  
       if(!document.getElementById("nativeInputDialog")) {
           // setup html
@@ -91,4 +89,4 @@
 }
 	 
 };
-mergeInto( LibraryManager.library , WebGLInputField );
+mergeInto(LibraryManager.library , WebGLInputField );
