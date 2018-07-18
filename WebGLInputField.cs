@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Runtime.InteropServices;
+using System;
 
 public class WebGLInputField : InputField
 {
@@ -21,7 +22,11 @@ public class WebGLInputField : InputField
     {
         base.Awake();
         placeholdText = placeHold.text;
+        onValueChanged.AddListener(OpenHtmlTextEditor);
     }
+
+
+
 
 #if UNITY_WEBGL && !UNITY_EDITOR
     [DllImport("__Internal")]
@@ -32,38 +37,54 @@ public class WebGLInputField : InputField
     private static extern bool IsOverlayDialogHtmlCanceled();
     [DllImport("__Internal")]
     private static extern string GetOverlayHtmlInputFieldValue();
+    [DllImport("__Internal")]
+    private static extern int GetCursortPosition();
+    [DllImport("__Internal")]
+    private static extern void SetCursortPosition(int index);
 
-    public override void OnPointerDown(PointerEventData eventData)
+    private bool inHtml;
+    protected override void OnEnable()
     {
-         base.OnPointerDown(eventData);
-        var rect = GetScreenRect();
-        Debug.Log(rect);
-        SetupOverlayDialogHtml(this.text, (int)rect.x, (int)rect.y, (int)rect.width, (int)rect.height);
-        lastText = text;
-        this.text = "";
-        placeHold.text = "";
-        StartCoroutine(this.OverlayHtmlCoroutine());
+        inHtml = false;
+    }
+
+    private void OpenHtmlTextEditor(string arg0)
+    {
+        if (!inHtml)
+        {
+            inHtml = true;
+            var rect = GetScreenRect();
+            SetupOverlayDialogHtml(this.text, (int)rect.x, (int)rect.y, (int)rect.width, (int)rect.height);
+            lastText = text;
+            StartCoroutine(this.OverlayHtmlCoroutine());
+        }
     }
 
     private IEnumerator OverlayHtmlCoroutine()
     {
-        caretPosition = text.Length;
-        yield return new WaitForEndOfFrame();
+        WebGLInput.captureAllKeyboardInput = true;
+        SetCursortPosition(caretPosition);
+        yield return new WaitForFixedUpdate();
         WebGLInput.captureAllKeyboardInput = false;
-		while (IsOverlayDialogHtmlActive())
+        this.text = "";
+        placeHold.text = "";
+
+        while (IsOverlayDialogHtmlActive())
 		{
 			yield return null;
             var textFromHtml = GetOverlayHtmlInputFieldValue();
-            if(textFromHtml != this.text)
-            {
+            if(textFromHtml != this.text) {
                 this.text = textFromHtml;
-                caretPosition = textFromHtml.Length;
+            }
+            if(!WebGLInput.captureAllKeyboardInput)
+            {
+                caretPosition = GetCursortPosition();
             }
         }
 
-		WebGLInput.captureAllKeyboardInput = true;
+        WebGLInput.captureAllKeyboardInput = true;
 
-		if (!IsOverlayDialogHtmlCanceled())
+        if (!IsOverlayDialogHtmlCanceled())
 		{
 			this.text = GetOverlayHtmlInputFieldValue();
            
@@ -73,25 +94,17 @@ public class WebGLInputField : InputField
             this.text = lastText;
         }
         placeHold.text = placeholdText;
+        inHtml = false;
 }
 #else
-    public override void OnPointerDown(PointerEventData eventData)
+    private void OpenHtmlTextEditor(string arg0)
     {
-        base.OnPointerDown(eventData);
         var rect = GetScreenRect();
         Debug.Log(rect);
         Debug.Log(Input.mousePosition);
     }
-
 #endif
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.KeypadEnter))
-        {
-            this.DeactivateInputField();
-            EventSystem.current.SetSelectedGameObject(null);
-        }
-    }
+
     private Rect GetScreenRect()
     {
         var rectTransform = textComponent.transform as RectTransform;
