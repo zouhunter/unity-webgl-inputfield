@@ -36,18 +36,20 @@ var WebGLInputField = {
 		  element.innerHTML = html;
 		  document.body.appendChild(element);
 		  var m_nativeInputDialogInput = document.getElementById("nativeInputDialogInput");
+		  var nativeDialog = document.getElementById("nativeInputDialog" );
+		  
 		  m_nativeInputDialogInput.onkeypress  = function (event) {
               if (event.keyCode == 13) {
-			      document.getElementById("nativeInputDialog").style.display="none";
+			      nativeDialog.style.display = "none";
               }
           };
 		  m_nativeInputDialogInput.onclick = function () {
               return false;
           };
  
-          var nativeDialog = document.getElementById("nativeInputDialog" );
+         
 		  nativeDialog.onclick = function () {
-		     nativeDialog.style.display != 'none';
+		     nativeDialog.style.display = 'none';
           };
       }
 	  
@@ -68,7 +70,7 @@ var WebGLInputField = {
   },
   IsOverlayDialogHtmlActive:function(){
      var nativeDialog = document.getElementById("nativeInputDialog" );
-     if( !nativeDialog ){
+     if(!nativeDialog ){
         return false;
      }
      return ( nativeDialog.style.display != 'none' );

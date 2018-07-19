@@ -106,7 +106,7 @@ public class WebGLInputField : InputField
                 yield return null;
             }
         }
-
+        HideDialog();
         WebGLInput.captureAllKeyboardInput = true;
         inHtml = false;
 }
