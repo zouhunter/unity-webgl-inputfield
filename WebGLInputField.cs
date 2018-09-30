@@ -10,11 +10,13 @@ public class WebGLInputField : InputField
 {
     private Vector3[] conner = new Vector3[4];
     private string lastText;
+
     protected override void Awake()
     {
         base.Awake();
         onValueChanged.AddListener(OpenHtmlTextEditor);
     }
+
 
 #if UNITY_WEBGL && !UNITY_EDITOR
     [DllImport("__Internal")]
@@ -55,25 +57,41 @@ public class WebGLInputField : InputField
     public override void OnPointerClick(PointerEventData eventData)
     {
         base.OnPointerClick(eventData);
-        if(Time.time - timer < 0.5f)
+        if (Time.time - timer < 0.5f)
         {
-            if (!inHtml)
-            {
-                inHtml = true;
-                ShowAndDelyHide(lastText);
-            }
-            else
-            {
-                inHtml = false;
-                HideDialog();
-                StopCoroutine(OverlayHtmlCoroutine());
-            }
+            caretPosition = GetCursortPosition();
+            SwitchInputFieldState();
         }
         else
         {
             timer = Time.time;
+            if (!inHtml)
+            {
+                inHtml = true;
+                if(caretPosition == 0)
+                 {
+                     caretPosition = lastText.Length;
+                 }
+                ShowAndDelyHide(lastText);
+            }
         }
     }
+
+    private void SwitchInputFieldState()
+    {
+        if (!inHtml)
+        {
+            inHtml = true;
+            ShowAndDelyHide(lastText);
+        }
+        else
+        {
+            inHtml = false;
+            HideDialog();
+            StopCoroutine(OverlayHtmlCoroutine());
+        }
+    }
+
     private void ShowAndDelyHide(string text)
     {
         var rect = GetScreenRect();
