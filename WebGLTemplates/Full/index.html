@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | %UNITY_WEB_NAME%</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    
+  <noscript>请设置浏览器允许Javascript脚本运行</noscript>
+  
+    <script src="jquery-1.11.2.min.js"></script>
+    <script>
+        var gameInstance;
+        var isIE = false;
+		
+		   wwidth = 0;
+        wheight = 0;
+		
+        function bro() {
+            var isie = false;
+            var userAgent = window.navigator.userAgent; //包含以下属性中所有或一部分的字符串：appCodeName,appName,appVersion,language,platform
+            if ((userAgent.indexOf('MSIE')) != -1 ||(userAgent.indexOf('NET') != -1 && userAgent.indexOf("rv") != -1)) {
+                isie = true;
+                /*broName = 'IE浏览器'; */
+                strStart = userAgent.indexOf('rv');
+                strStop = userAgent.indexOf(')');
+                temp = userAgent.substring(strStart, strStop);
+                broName = temp.replace('rv', 'IE').replace(':', '版本号');
+            }
+            return isie;
+        }
+    </script>
+ </head>
+ <body style="background-color: white; padding: 0 0; margin: 0 0;;height:100%; width: 100%;">
+
+    <img id="mytips" class="imghide" src="TemplateData/nonsupport.png"/>
+   <div class="webgl-content" id="mywebgl" style="display: none;overflow: hidden;">
+        <div id="gameContainer" style="background-color: white;overflow: hidden;"></div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+		
+		    wwidth = $(window).innerWidth();
+            wheight = $(window).innerHeight();
+		
+            isIE = bro();
+            if (isIE) {
+                //如果是IE浏览器或者处于IE的兼容模式，则将WEBGL隐藏
+                $("#mywebgl").hide();
+                $("#mytips").show();
+
+
+            } else {
+
+                //如果不是IE浏览器或者没有处于IE的兼容模式，则将提示背景隐藏
+                $("#mytips").hide();
+                $("#mywebgl").show();
+				
+				  $("#mywebgl").css({ "height": "100%", "width": "100%" });
+                $("#gameContainer").css({ "width": wwidth+"px", "height": wheight+"px", "max-height": "100%", "position": "absolute", "z-index": -1, "left": 0, "top": 0 });
+				 $("canvas").css({ "width": wwidth + "px", "height": wheight + "px"});
+				
+				   $(window).resize(function () {
+                    
+                    wwidth = $(window).innerWidth();
+                    wheight = $(window).innerHeight();
+					
+                    $("#gameContainer").css({ "width": wwidth + "px", "height": wheight + "px", "max-height": "100%", "position": "absolute","z-index": -1, "left": 0, "top": 0 });
+					 $("canvas").css({ "width": wwidth + "px", "height": wheight + "px", "max-height": "100%" });
+
+                });
+
+				
+                $.getScript("TemplateData/UnityProgress.js",function(){
+				  $.getScript("%UNITY_WEBGL_LOADER_URL%",function() {
+				  
+                    gameInstance = UnityLoader.instantiate("gameContainer", "%UNITY_WEBGL_BUILD_URL%", { onProgress: UnityProgress });
+
+                });
+				
+				});
+            }
+        });
+    </script>
+  </body>
+</html>
