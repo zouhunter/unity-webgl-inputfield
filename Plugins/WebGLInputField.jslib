@@ -12,22 +12,28 @@ var WebGLInputField = {
       if(!document.getElementById("nativeInputDialog")) {
 	      var element = document.createElement('div');
           // setup html
-          var html = '<div id="nativeInputDialog" style="background:transparent; width:0%; height:0%; margin: 0; padding: 0; position: absolute; left: 0; top:0; z-index:888;">' +
-              '<input id="nativeInputDialogInput" type="text" style="border: none; background: none; width:0; height:0;left: 10; top:0;color: white; outline: none; display: block; position: relative; font-size: 0px; ">' +
+          var html = '<div id="nativeInputDialog" style="background:transparent; width:0%; height:0%; margin: 0; padding: 0; position: absolute; z-index:888;">' +
+              '<input id="nativeInputDialogInput" type="text" style="border: none; background: none; width:0; height:0;left: 0; top:0;color: white; outline: none; display: block; position: relative; font-size: 10px; ">' +
               '</div>';
 		  element.innerHTML = html;
 		  document.body.appendChild(element);
-		  var m_nativeInputDialogInput = document.getElementById("nativeInputDialogInput");
 		  
+		  var m_nativeInputDialogInput = document.getElementById("nativeInputDialogInput");
 		  m_nativeInputDialogInput.onkeypress  = function (event) {
 			  //点击回车键，隐藏输入框
               if (event.keyCode == 13) {
 				  document.getElementById("nativeInputDialog").style.display="none";
               }
           };
+		  
+		  document.onmousemove=function(event){
+		     event = event||window.event;
+			 document.getElementById("nativeInputDialog").style.left = event.clientX + 'px';
+			 document.getElementById("nativeInputDialog").style.top = event.clientY + 20 + 'px';
+		  }
       }
 	  var m_nativeInputDialog = document.getElementById("nativeInputDialogInput");
-      m_nativeInputDialog.value = defaultValue;
+	  m_nativeInputDialog.value = defaultValue;
 	  document.getElementById("nativeInputDialog").style.display="";
       document.getElementById("nativeInputDialogInput").focus();
 	  

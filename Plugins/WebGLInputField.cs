@@ -68,7 +68,7 @@ public class WebGLInputField : InputField
     private IEnumerator DelySetPostion()
     {
         captureAllKeyboardInput = true;
-        yield return new WaitForSeconds(0.2f);
+        yield return null;
         SetSelection();
         captureAllKeyboardInput = false;
         setposCoroutine = null;
@@ -139,7 +139,7 @@ public class WebGLInputField : InputField
     }
 
 #endif
-
+    //注意Time.timeScale = 0 会无法更新信息
     //private void Update()
     //{
     //    if(Input.GetMouseButtonDown(1) && isFocused)
